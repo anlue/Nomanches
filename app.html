@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>No Manches - Pedido</title>
+
+  <style>
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html, body{
+      width:100%;
+      overflow-x:hidden;
+    }
+
+    body{
+      font-family:Arial, Helvetica, sans-serif;
+      background:#0e0e0e;
+      color:#fff;
+      padding-bottom:170px;
+    }
+
+    .header{
+      position:sticky;
+      top:0;
+      z-index:100;
+      background:#000;
+      border-bottom:3px solid #ff7a00;
+      padding:18px 14px 14px;
+      text-align:center;
+    }
+
+    .logo{
+      font-size:32px;
+      font-weight:bold;
+      letter-spacing:1px;
+    }
+
+    .subtitle{
+      font-size:14px;
+      color:#bbb;
+      margin-top:5px;
+    }
+
+    .top-actions{
+      padding:12px 14px 0;
+      display:grid;
+      gap:10px;
+    }
+
+    .top-btn{
+      display:block;
+      width:100%;
+      text-align:center;
+      text-decoration:none;
+      padding:14px;
+      border-radius:14px;
+      font-weight:bold;
+      font-size:15px;
+    }
+
+    .pdf-btn{
+      background:#1c1c1c;
+      color:#ffb36b;
+      border:1px solid rgba(255,122,0,.35);
+    }
+
+    .info-btn{
+      background:#171717;
+      color:#ddd;
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .search-wrap{
+      padding:12px 14px 0;
+    }
+
+    .search{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:14px;
+      padding:14px;
+      font-size:15px;
+      background:#171717;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .chips{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      padding:12px 14px 6px;
+      scrollbar-width:none;
+    }
+
+    .chips::-webkit-scrollbar{
+      display:none;
+    }
+
+    .chip{
+      border:none;
+      border-radius:999px;
+      padding:10px 14px;
+      background:#1d1d1d;
+      color:#ddd;
+      white-space:nowrap;
+      font-weight:bold;
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .chip.active{
+      background:#ff7a00;
+      color:#111;
+    }
+
+    .menu-container{
+      padding:8px 14px 20px;
+    }
+
+    .category{
+      margin-bottom:22px;
+    }
+
+    .category-title{
+      font-size:24px;
+      font-weight:bold;
+      color:#ff7a00;
+      margin-bottom:6px;
+    }
+
+    .category-desc{
+      color:#bdbdbd;
+      font-size:13px;
+      line-height:1.45;
+      margin-bottom:12px;
+    }
+
+    .items-grid{
+      display:grid;
+      gap:12px;
+    }
+
+    .item{
+      background:#171717;
+      border:1px solid rgba(255,255,255,.06);
+      border-left:4px solid #ff7a00;
+      border-radius:16px;
+      padding:14px;
+      box-shadow:0 6px 16px rgba(0,0,0,.22);
+    }
+
+    .item-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+
+    .item-name{
+      font-size:18px;
+      font-weight:bold;
+      line-height:1.2;
+    }
+
+    .item-price{
+      font-size:18px;
+      font-weight:bold;
+      color:#ffb36b;
+      white-space:nowrap;
+    }
+
+    .item-desc{
+      color:#cfcfcf;
+      font-size:13px;
+      line-height:1.4;
+      margin-top:8px;
+    }
+
+    .controls{
+      margin-top:12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+
+    .qty-box{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .qty-btn{
+      width:40px;
+      height:40px;
+      border:none;
+      border-radius:12px;
+      background:#ff7a00;
+      color:#111;
+      font-size:24px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .qty-btn:active{
+      transform:scale(.97);
+    }
+
+    .qty{
+      min-width:24px;
+      text-align:center;
+      font-size:18px;
+      font-weight:bold;
+    }
+
+    .subtotal{
+      color:#dcdcdc;
+      font-size:13px;
+      text-align:right;
+    }
+
+    .empty{
+      text-align:center;
+      color:#9d9d9d;
+      padding:30px 20px;
+      font-size:14px;
+    }
+
+    .footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      background:#000;
+      border-top:2px solid #ff7a00;
+      padding:14px;
+      box-shadow:0 -4px 14px rgba(0,0,0,.35);
+      z-index:120;
+    }
+
+    .summary-title{
+      text-align:center;
+      color:#bbb;
+      font-size:14px;
+      margin-bottom:8px;
+    }
+
+    .summary{
+      background:#101010;
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:12px;
+      padding:10px;
+      max-height:90px;
+      overflow:auto;
+      color:#ddd;
+      font-size:13px;
+      line-height:1.45;
+      margin-bottom:10px;
+    }
+
+    .total{
+      text-align:center;
+      font-size:24px;
+      font-weight:bold;
+      color:#ff7a00;
+      margin-bottom:10px;
+    }
+
+    .continue-btn{
+      width:100%;
+      border:none;
+      border-radius:14px;
+      padding:16px;
+      background:#25D366;
+      color:#fff;
+      font-size:18px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .continue-btn:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+    }
+
+    .footer-note{
+      text-align:center;
+      color:#9c9c9c;
+      font-size:12px;
+      line-height:1.4;
+      margin-top:8px;
+    }
+
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.7);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      z-index:300;
+      padding:0;
+    }
+
+    .modal-backdrop.show{
+      display:flex;
+    }
+
+    .modal{
+      width:100%;
+      max-width:560px;
+      background:#111;
+      border-top-left-radius:24px;
+      border-top-right-radius:24px;
+      border-top:2px solid #ff7a00;
+      padding:16px 14px 18px;
+      box-shadow:0 -8px 24px rgba(0,0,0,.45);
+      animation:subir .2s ease;
+    }
+
+    @keyframes subir{
+      from{ transform:translateY(30px); opacity:.7; }
+      to{ transform:translateY(0); opacity:1; }
+    }
+
+    .modal-handle{
+      width:52px;
+      height:5px;
+      border-radius:999px;
+      background:#555;
+      margin:0 auto 14px;
+    }
+
+    .modal-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .modal-title{
+      font-size:20px;
+      font-weight:bold;
+    }
+
+    .close-btn{
+      border:none;
+      background:#1d1d1d;
+      color:#fff;
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      font-size:22px;
+      cursor:pointer;
+    }
+
+    .customer-fields{
+      display:grid;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .customer-fields input,
+    .customer-fields textarea,
+    .customer-fields select{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:12px;
+      padding:12px;
+      font-size:14px;
+      font-family:Arial, Helvetica, sans-serif;
+      background:#fff;
+      color:#111;
+    }
+
+    .customer-fields textarea{
+      min-height:72px;
+      resize:none;
+    }
+
+    .field-hidden{
+      display:none;
+    }
+
+    .send-btn{
+      width:100%;
+      border:none;
+      border-radius:14px;
+      padding:16px;
+      background:#25D366;
+      color:#fff;
+      font-size:18px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .send-btn:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+    }
+
+    .modal-note{
+      text-align:center;
+      color:#9c9c9c;
+      font-size:12px;
+      line-height:1.4;
+      margin-top:8px;
+    }
+
+    @media (max-width:480px){
+      .logo{
+        font-size:28px;
+      }
+
+      .item-name{
+        font-size:17px;
+      }
+
+      .item-price{
+        font-size:17px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="logo">NO MANCHES 🌮</div>
+    <div class="subtitle">Taquería • Concón</div>
+  </div>
+
+  <div class="top-actions">
+    <a class="top-btn pdf-btn" href="https://drive.google.com/file/d/15OeRjRlghJOhtpZ0L2uSOp7AvH9iU3N0/view">
+      Ver carta PDF completa
+    </a>
+
+    <a class="top-btn info-btn" href="https://www.instagram.com/nomanches.taqueria/">
+      Ir al Instagram
+    </a>
+  </div>
+
+  <div class="search-wrap">
+    <input
+      type="text"
+      id="searchInput"
+      class="search"
+      placeholder="Buscar producto..."
+    >
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="menu-container" id="menuContainer"></div>
+
+  <div class="footer">
+    <div class="summary-title">Tu pedido</div>
+    <div class="summary" id="summary">Aún no agregas productos.</div>
+    <div class="total" id="total">$0</div>
+
+    <button class="continue-btn" id="continueBtn" disabled>Continuar pedido</button>
+
+    <div class="footer-note">
+      Primero elige tus productos y luego completa tus datos.
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <div class="modal-handle"></div>
+
+      <div class="modal-head">
+        <div class="modal-title">Completa tu pedido</div>
+        <button class="close-btn" id="closeModalBtn">×</button>
+      </div>
+
+      <div class="customer-fields">
+        <input type="text" id="nombreCliente" placeholder="Tu nombre">
+
+        <select id="tipoEntrega">
+          <option value="Retiro en local">Retiro en local</option>
+          <option value="Delivery">Delivery</option>
+        </select>
+
+        <div id="direccionWrap" class="field-hidden">
+          <input type="text" id="direccionCliente" placeholder="Dirección para delivery">
+        </div>
+
+        <textarea id="comentarios" placeholder="Comentarios del pedido (sin cebolla, extra salsa, etc.)"></textarea>
+      </div>
+
+      <button class="send-btn" id="sendBtn">Enviar pedido por WhatsApp</button>
+
+      <div class="modal-note">
+        Revisa que tu selección esté correcta antes de enviar.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const numeroWhatsApp = "56950662327";
+
+    const categorias = [
+      {
+        id: "tacos",
+        nombre: "Tacos",
+        descripcion: "Doble tortilla de trigo más 50 gr de proteína a elección, cebolla & cilantro, salsa de palta y salsa picante de la casa (opcional).",
+        items: [
+          { id: "taco-pastor", nombre: "Taco Al Pastor", precio: 3190, desc: "Carne de cerdo adobada con achiote más piña asada." },
+          { id: "taco-bistec", nombre: "Taco Bistec", precio: 3190, desc: "Carne de res frita al ajo." },
+          { id: "taco-pollo", nombre: "Taco Pollo", precio: 3190, desc: "Filete de pollo al limón con toques de orégano." },
+          { id: "taco-champinon", nombre: "Taco Champiñón", precio: 3490, desc: "Exquisitos hongos salteados." },
+          { id: "taco-frijol", nombre: "Taco Frijol", precio: 3490, desc: "Deliciosos frijoles caseros del día." },
+          { id: "taco-maiz", nombre: "Taco Maíz", precio: 3490, desc: "Tiernos choclos." },
+          { id: "taco-birria", nombre: "Taco Birria", precio: 3690, desc: "Carne mechada a la mexicana." },
+          { id: "taco-chorizo", nombre: "Taco Chorizo", precio: 3690, desc: "Riquísima longaniza artesanal." },
+          { id: "taco-tocino", nombre: "Taco Tocino", precio: 3690, desc: "Sabor único de bacon frito." }
+        ]
+      },
+      {
+        id: "quesadillas",
+        nombre: "Quesadillas",
+        descripcion: "Doble tortilla de trigo más 50 gr de proteína a elección y exquisito queso mantecoso fundido.",
+        items: [
+          { id: "quesa-pastor", nombre: "Quesadilla Al Pastor", precio: 3490, desc: "Carne de cerdo adobada con achiote más piña asada." },
+          { id: "quesa-bistec", nombre: "Quesadilla Bistec", precio: 3490, desc: "Carne de res frita al ajo." },
+          { id: "quesa-pollo", nombre: "Quesadilla Pollo", precio: 3490, desc: "Filete de pollo al limón con toques de orégano." },
+          { id: "quesa-champinon", nombre: "Quesadilla Champiñón", precio: 3790, desc: "Exquisitos hongos salteados." },
+          { id: "quesa-frijol", nombre: "Quesadilla Frijol", precio: 3790, desc: "Deliciosos frijoles caseros del día." },
+          { id: "quesa-maiz", nombre: "Quesadilla Maíz", precio: 3790, desc: "Tiernos choclos." },
+          { id: "quesa-birria", nombre: "Quesadilla Birria", precio: 3990, desc: "Carne mechada a la mexicana." },
+          { id: "quesa-chorizo", nombre: "Quesadilla Chorizo", precio: 3990, desc: "Riquísima longaniza artesanal." },
+          { id: "quesa-tocino", nombre: "Quesadilla Tocino", precio: 3990, desc: "Sabor único de bacon frito." }
+        ]
+      },
+      {
+        id: "quesaburros",
+        nombre: "Quesaburros",
+        descripcion: "Tortilla de trigo XL más 80 gr de proteína a elección, queso mantecoso fundido, maíz, cebolla & cilantro, crema y mayonesa.",
+        items: [
+          { id: "qb-pastor", nombre: "Quesaburro Al Pastor", precio: 6490, desc: "Carne de cerdo adobada con achiote más piña asada." },
+          { id: "qb-bistec", nombre: "Quesaburro Bistec", precio: 6490, desc: "Carne de res frita al ajo." },
+          { id: "qb-pollo", nombre: "Quesaburro Pollo", precio: 6490, desc: "Filete de pollo al limón con toques de orégano." },
+          { id: "qb-champinon", nombre: "Quesaburro Champiñón", precio: 6990, desc: "Exquisitos hongos salteados." },
+          { id: "qb-frijol", nombre: "Quesaburro Frijol", precio: 6990, desc: "Deliciosos frijoles caseros del día." },
+          { id: "qb-birria", nombre: "Quesaburro Birria", precio: 7490, desc: "Carne mechada a la mexicana." },
+          { id: "qb-chorizo", nombre: "Quesaburro Chorizo", precio: 7490, desc: "Riquísima longaniza artesanal." },
+          { id: "qb-tocino", nombre: "Quesaburro Tocino", precio: 7490, desc: "Sabor único de bacon frito." }
+        ]
+      },
+      {
+        id: "burritos",
+        nombre: "Burritos",
+        descripcion: "Tortilla de trigo XL más 100 gr de proteína a elección, arroz, lechuga, tomate, cebolla & cilantro, frijol, queso, salsa de palta y mayonesa.",
+        items: [
+          { id: "bur-pastor", nombre: "Burrito Al Pastor", precio: 7490, desc: "Carne de cerdo adobada con achiote más piña asada." },
+          { id: "bur-bistec", nombre: "Burrito Bistec", precio: 7490, desc: "Carne de res frita al ajo." },
+          { id: "bur-pollo", nombre: "Burrito Pollo", precio: 7490, desc: "Filete de pollo al limón con toques de orégano." },
+          { id: "bur-champinon", nombre: "Burrito Champiñón", precio: 7990, desc: "Exquisitos hongos salteados." },
+          { id: "bur-maiz", nombre: "Burrito Maíz", precio: 7990, desc: "Tiernos choclos." },
+          { id: "bur-birria", nombre: "Burrito Birria", precio: 8490, desc: "Carne mechada a la mexicana." },
+          { id: "bur-chorizo", nombre: "Burrito Chorizo", precio: 8490, desc: "Riquísima longaniza artesanal." },
+          { id: "bur-tocino", nombre: "Burrito Tocino", precio: 8490, desc: "Sabor único de bacon frito." }
+        ]
+      },
+      {
+        id: "nachos",
+        nombre: "Nachos",
+        descripcion: "Chips de maíz frito más toppings a elección.",
+        items: [
+          { id: "nachos-salsa", nombre: "Nachos con Salsa", precio: 2990, desc: "Queso mantecoso granulado, salsa a elección y cebolla & cilantro." },
+          { id: "nachos-guacamole", nombre: "Nachos con Guacamole", precio: 4490, desc: "Queso mantecoso granulado, cebolla & cilantro y guacamole." },
+          { id: "nachos-prot-carnes", nombre: "Nachos con Proteína + Salsa (Carnes)", precio: 4990, desc: "Proteína a elección: Al Pastor, Bistec o Pollo." },
+          { id: "nachos-prot-veggie", nombre: "Nachos con Proteína + Salsa (Veggie)", precio: 5490, desc: "Proteína a elección: Champiñón, Frijol o Maíz." },
+          { id: "nachos-prot-premium", nombre: "Nachos con Proteína + Salsa (Premium)", precio: 5990, desc: "Proteína a elección: Birria, Chorizo o Tocino." },
+          { id: "nachos-queso", nombre: "Nachos con Queso Fundido", precio: 4990, desc: "Queso mantecoso o cheddar fundido más jalapeños." }
+        ]
+      },
+      {
+        id: "dorilocos",
+        nombre: "Dorilocos",
+        descripcion: "Doritos sabor queso (100 gr) más 100 gr de proteína a elección, queso mantecoso, tomate, maíz, cebolla & cilantro, cheddar, palta y aderezos.",
+        items: [
+          { id: "dori-pastor", nombre: "Dorilocos Al Pastor", precio: 7990, desc: "Carne de cerdo adobada con achiote más piña asada." },
+          { id: "dori-bistec", nombre: "Dorilocos Bistec", precio: 7990, desc: "Carne de res frita al ajo." },
+          { id: "dori-pollo", nombre: "Dorilocos Pollo", precio: 7990, desc: "Filete de pollo al limón con toques de orégano." },
+          { id: "dori-champinon", nombre: "Dorilocos Champiñón", precio: 8490, desc: "Exquisitos hongos salteados." },
+          { id: "dori-frijol", nombre: "Dorilocos Frijol", precio: 8490, desc: "Deliciosos frijoles caseros del día." },
+          { id: "dori-tocino", nombre: "Dorilocos Tocino", precio: 8990, desc: "Sabor único de bacon frito." },
+          { id: "dori-chorizo", nombre: "Dorilocos Chorizo", precio: 8990, desc: "Riquísima longaniza artesanal." },
+          { id: "dori-birria", nombre: "Dorilocos Birria", precio: 8990, desc: "Carne mechada a la mexicana." }
+        ]
+      },
+      {
+        id: "papas",
+        nombre: "Papas Fritas",
+        descripcion: "Papas a la francesa con toppings y aderezos a elección.",
+        items: [
+          { id: "papas-peq", nombre: "Papas Pequeñas", precio: 2490, desc: "200 gr de papas fritas más aderezos a elección." },
+          { id: "papas-grandes", nombre: "Papas Grandes", precio: 4990, desc: "450 gr de papas fritas más aderezos a elección." },
+          { id: "papas-salchi", nombre: "Salchipapas", precio: 5490, desc: "350 gr de papas fritas con salchicha y aderezos." },
+          { id: "papas-guaca", nombre: "Papas con Guacamole", precio: 6490, desc: "500 gr de papas fritas con guacamole y aderezos." },
+          { id: "papas-queso", nombre: "Papas con Queso Fundido", precio: 6990, desc: "500 gr de papas fritas con queso fundido, jalapeños y aderezos." },
+          { id: "papas-sup-carnes", nombre: "Papas Supremas (Carnes)", precio: 7990, desc: "Queso, cebolla & cilantro, crema ácida, aderezos y proteína Al Pastor, Bistec o Pollo." },
+          { id: "papas-sup-veggie", nombre: "Papas Supremas (Veggie)", precio: 8490, desc: "Queso, cebolla & cilantro, crema ácida, aderezos y proteína Champiñón, Frijol o Maíz." },
+          { id: "papas-sup-premium", nombre: "Papas Supremas (Premium)", precio: 8990, desc: "Queso, cebolla & cilantro, crema ácida, aderezos y proteína Birria, Chorizo o Tocino." }
+        ]
+      },
+      {
+        id: "hotdog",
+        nombre: "Hotdog",
+        descripcion: "Salchicha en pan copihue más toppings y aderezos a elección.",
+        items: [
+          { id: "doguito", nombre: "Doguito", precio: 2490, desc: "Salchicha más aderezos a elección." },
+          { id: "dog-italiano", nombre: "Hotdog Italiano", precio: 3490, desc: "Salchicha más palta, tomate y aderezos." },
+          { id: "dog-guaca", nombre: "Hotdog Mex Guacamole", precio: 4490, desc: "Salchicha envuelta en tocino con guacamole y aderezos." },
+          { id: "dog-ranchero", nombre: "Hotdog Mex Ranchero", precio: 4490, desc: "Salchicha envuelta en tocino con tomate, cebolla & cilantro, jalapeños y aderezos." },
+          { id: "dog-carnalito", nombre: "Hotdog Mex Carnalito", precio: 4490, desc: "Salchicha envuelta en tocino con queso fundido, lechuga, tomate y aderezos." },
+          { id: "dog-veggie", nombre: "Hotdog Veggie", precio: 4490, desc: "Proteína veggie a elección con guacamole y aderezos." }
+        ]
+      },
+      {
+        id: "especiales",
+        nombre: "Especiales de la Casa",
+        descripcion: "Especialidades destacadas de la carta.",
+        items: [
+          { id: "esp-camaron", nombre: "Taco Camarón", precio: 5490, desc: "Camarones adobados en achiote, costra de queso, cebolla & cilantro, palta y mayonesa." },
+          { id: "esp-bigmc", nombre: "Taco Big MC", precio: 4990, desc: "Hamburguesa casera, queso cheddar, cebolla, pepinillos dill, lechuga y salsa Big Mc." },
+          { id: "esp-pobre", nombre: "Taco a lo Pobre", precio: 5990, desc: "Papas fritas, cebolla caramelizada, huevo frito, proteína a elección y aderezos." },
+          { id: "esp-bur-guaca-carnes", nombre: "Burrito Guacamole (Carnes)", precio: 8990, desc: "Proteína a elección y guacamole. Proteínas: Al Pastor, Bistec o Pollo." },
+          { id: "esp-bur-guaca-veggie", nombre: "Burrito Guacamole (Veggie)", precio: 9490, desc: "Proteína a elección y guacamole. Proteínas: Champiñón, Frijol o Maíz." },
+          { id: "esp-bur-guaca-premium", nombre: "Burrito Guacamole (Premium)", precio: 9990, desc: "Proteína a elección y guacamole. Proteínas: Birria, Chorizo o Tocino." },
+          { id: "esp-bur-sup-carnes", nombre: "Burrito Supremo (Carnes)", precio: 10490, desc: "Triple proteína, doble cheddar, cebolla & cilantro, Doritos y aderezos." },
+          { id: "esp-bur-sup-veggie", nombre: "Burrito Supremo (Veggie)", precio: 10990, desc: "Triple proteína, doble cheddar, cebolla & cilantro, Doritos y aderezos." },
+          { id: "esp-bur-sup-premium", nombre: "Burrito Supremo (Premium)", precio: 11490, desc: "Triple proteína, doble cheddar, cebolla & cilantro, Doritos y aderezos." }
+        ]
+      },
+      {
+        id: "frios",
+        nombre: "Bebestibles Fríos",
+        descripcion: "Bebidas frías disponibles.",
+        items: [
+          { id: "agua", nombre: "Agua", precio: 1390, desc: "Agua mineral 600 cc con o sin gas." },
+          { id: "bebida-lata", nombre: "Bebida", precio: 1790, desc: "Bebida en lata 350 cc, variedades Coca-Cola." },
+          { id: "jugos", nombre: "Jugos", precio: 3490, desc: "Pulpa de fruta según disponibilidad." },
+          { id: "batidos", nombre: "Batidos", precio: 3990, desc: "Leche, avena, azúcar y pulpa de fruta." },
+          { id: "tamarindo", nombre: "Agua de Tamarindo", precio: 2990, desc: "Agua fresca sabor agridulce." },
+          { id: "jamaica", nombre: "Agua de Jamaica", precio: 2990, desc: "Agua fresca sabor hibisco." },
+          { id: "limonada", nombre: "Limonada", precio: 2990, desc: "Agua fresca con sabor a limón y menta." },
+          { id: "michelada", nombre: "Michelada", precio: 3990, desc: "Cerveza, limón, Tajín y Chamoy." },
+          { id: "chelada", nombre: "Chelada", precio: 3990, desc: "Cerveza, limón y sal." },
+          { id: "horchata", nombre: "Agua de Horchata", precio: 2990, desc: "Agua fresca en base a leche condensada y arroz con leche." }
+        ]
+      },
+      {
+        id: "calientes",
+        nombre: "Bebestibles Calientes",
+        descripcion: "Opciones calientes de la carta.",
+        items: [
+          { id: "te", nombre: "Té", precio: 1490, desc: "" },
+          { id: "cafe", nombre: "Café", precio: 1490, desc: "" },
+          { id: "cafe-leche", nombre: "Café con Leche", precio: 1690, desc: "" },
+          { id: "te-leche", nombre: "Té con Leche", precio: 1690, desc: "" },
+          { id: "capuccino", nombre: "Capuccino", precio: 1990, desc: "" },
+          { id: "moka", nombre: "Doble Choca Moka", precio: 1990, desc: "" },
+          { id: "latte", nombre: "Vainilla Latte", precio: 1990, desc: "" }
+        ]
+      },
+      {
+        id: "extras",
+        nombre: "Extras",
+        descripcion: "Agregados y complementos.",
+        items: [
+          { id: "ext-toppings-base", nombre: "Toppings base", precio: 990, desc: "Cebolla & cilantro, lechuga, piña, tomate o arroz." },
+          { id: "ext-toppings-pal-maiz", nombre: "Toppings Palta / Maíz", precio: 1490, desc: "Palta o maíz." },
+          { id: "ext-salsas", nombre: "Salsas", precio: 790, desc: "Agria, palta, picante, manjar, mayo chipotle, mayonesa Kraft, mostaza Heinz o ketchup Heinz." },
+          { id: "ext-guacamole", nombre: "Guacamole", precio: 2490, desc: "" },
+          { id: "ext-queso-gran", nombre: "Queso Mantecoso Granulado", precio: 1490, desc: "" },
+          { id: "ext-queso-fund", nombre: "Queso Fundido", precio: 1990, desc: "" },
+          { id: "ext-tajin", nombre: "Tajín", precio: 1190, desc: "3 sobres de 1 gr." },
+          { id: "ext-prot-carnes", nombre: "Proteína Carnes", precio: 1590, desc: "Al Pastor, Bistec o Pollo." },
+          { id: "ext-prot-veggie", nombre: "Proteína Veggie", precio: 1890, desc: "Champiñón, Frijol o Maíz." },
+          { id: "ext-prot-premium", nombre: "Proteína Premium", precio: 2090, desc: "Birria, Chorizo o Tocino." }
+        ]
+      }
+    ];
+
+    const chipsContainer = document.getElementById("chips");
+    const menuContainer = document.getElementById("menuContainer");
+    const searchInput = document.getElementById("searchInput");
+    const summary = document.getElementById("summary");
+    const totalEl = document.getElementById("total");
+    const continueBtn = document.getElementById("continueBtn");
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const sendBtn = document.getElementById("sendBtn");
+    const nombreCliente = document.getElementById("nombreCliente");
+    const tipoEntrega = document.getElementById("tipoEntrega");
+    const direccionWrap = document.getElementById("direccionWrap");
+    const direccionCliente = document.getElementById("direccionCliente");
+    const comentarios = document.getElementById("comentarios");
+
+    const carrito = {};
+    let categoriaActiva = "todas";
+
+    function formatoCLP(valor){
+      return "$" + valor.toLocaleString("es-CL");
+    }
+
+    function crearChips(){
+      const lista = [{ id: "todas", nombre: "Todas" }, ...categorias.map(c => ({ id: c.id, nombre: c.nombre }))];
+      chipsContainer.innerHTML = "";
+
+      lista.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "chip" + (cat.id === categoriaActiva ? " active" : "");
+        btn.textContent = cat.nombre;
+        btn.onclick = () => {
+          categoriaActiva = cat.id;
+          crearChips();
+          renderMenu();
+        };
+        chipsContainer.appendChild(btn);
+      });
+    }
+
+    function itemCoincideBusqueda(item, texto){
+      if(!texto) return true;
+      const base = (item.nombre + " " + item.desc).toLowerCase();
+      return base.includes(texto.toLowerCase());
+    }
+
+    function renderMenu(){
+      const filtro = searchInput.value.trim().toLowerCase();
+      menuContainer.innerHTML = "";
+      let totalResultados = 0;
+
+      categorias.forEach(categoria => {
+        if(categoriaActiva !== "todas" && categoria.id !== categoriaActiva){
+          return;
+        }
+
+        const itemsFiltrados = categoria.items.filter(item => itemCoincideBusqueda(item, filtro));
+
+        if(itemsFiltrados.length === 0){
+          return;
+        }
+
+        totalResultados += itemsFiltrados.length;
+
+        const section = document.createElement("section");
+        section.className = "category";
+        section.innerHTML = `
+          <div class="category-title">${categoria.nombre}</div>
+          <div class="category-desc">${categoria.descripcion}</div>
+          <div class="items-grid"></div>
+        `;
+
+        const grid = section.querySelector(".items-grid");
+
+        itemsFiltrados.forEach(item => {
+          const qty = carrito[item.id] || 0;
+          const subtotal = qty * item.precio;
+
+          const card = document.createElement("div");
+          card.className = "item";
+          card.innerHTML = `
+            <div class="item-top">
+              <div class="item-name">${item.nombre}</div>
+              <div class="item-price">${formatoCLP(item.precio)}</div>
+            </div>
+            <div class="item-desc">${item.desc || " "}</div>
+            <div class="controls">
+              <div class="qty-box">
+                <button class="qty-btn minus">-</button>
+                <div class="qty">${qty}</div>
+                <button class="qty-btn plus">+</button>
+              </div>
+              <div class="subtotal">Subtotal: <span>${formatoCLP(subtotal)}</span></div>
+            </div>
+          `;
+
+          const minus = card.querySelector(".minus");
+          const plus = card.querySelector(".plus");
+
+          minus.onclick = () => {
+            const actual = carrito[item.id] || 0;
+            if(actual > 0){
+              carrito[item.id] = actual - 1;
+              if(carrito[item.id] === 0){
+                delete carrito[item.id];
+              }
+              renderMenu();
+              actualizarResumen();
+            }
+          };
+
+          plus.onclick = () => {
+            const actual = carrito[item.id] || 0;
+            carrito[item.id] = actual + 1;
+            renderMenu();
+            actualizarResumen();
+          };
+
+          grid.appendChild(card);
+        });
+
+        menuContainer.appendChild(section);
+      });
+
+      if(totalResultados === 0){
+        menuContainer.innerHTML = `<div class="empty">No se encontraron productos con esa búsqueda.</div>`;
+      }
+    }
+
+    function obtenerTodosLosItems(){
+      return categorias.flatMap(cat =>
+        cat.items.map(item => ({
+          ...item,
+          categoria: cat.nombre
+        }))
+      );
+    }
+
+    function actualizarResumen(){
+      const allItems = obtenerTodosLosItems();
+      let total = 0;
+      let lineas = [];
+
+      allItems.forEach(item => {
+        const qty = carrito[item.id] || 0;
+        if(qty > 0){
+          const subtotal = qty * item.precio;
+          total += subtotal;
+          lineas.push(`• ${qty} x ${item.nombre} = ${formatoCLP(subtotal)}`);
+        }
+      });
+
+      if(lineas.length === 0){
+        summary.textContent = "Aún no agregas productos.";
+        totalEl.textContent = "$0";
+        continueBtn.disabled = true;
+      } else {
+        summary.innerHTML = lineas.join("<br>");
+        totalEl.textContent = formatoCLP(total);
+        continueBtn.disabled = false;
+      }
+    }
+
+    function actualizarVisibilidadDireccion(){
+      const esDelivery = tipoEntrega.value === "Delivery";
+      direccionWrap.classList.toggle("field-hidden", !esDelivery);
+
+      if(!esDelivery){
+        direccionCliente.value = "";
+      }
+    }
+
+    function construirMensaje(){
+      const allItems = obtenerTodosLosItems();
+      let total = 0;
+      let pedido = [];
+
+      allItems.forEach(item => {
+        const qty = carrito[item.id] || 0;
+        if(qty > 0){
+          const subtotal = qty * item.precio;
+          total += subtotal;
+          pedido.push(`${qty} x ${item.nombre} (${formatoCLP(subtotal)})`);
+        }
+      });
+
+      if(pedido.length === 0){
+        return "";
+      }
+
+      let mensaje = "Hola, quiero hacer este pedido en No Manches:\n\n";
+
+      pedido.forEach(linea => {
+        mensaje += `• ${linea}\n`;
+      });
+
+      mensaje += `\nTotal: ${formatoCLP(total)}`;
+
+      if(nombreCliente.value.trim()){
+        mensaje += `\nNombre: ${nombreCliente.value.trim()}`;
+      }
+
+      if(tipoEntrega.value){
+        mensaje += `\nTipo de entrega: ${tipoEntrega.value}`;
+      }
+
+      if(tipoEntrega.value === "Delivery" && direccionCliente.value.trim()){
+        mensaje += `\nDirección: ${direccionCliente.value.trim()}`;
+      }
+
+      if(comentarios.value.trim()){
+        mensaje += `\nComentarios: ${comentarios.value.trim()}`;
+      }
+
+      mensaje += "\n\nEnviado desde el menú web.";
+      return mensaje;
+    }
+
+    continueBtn.addEventListener("click", () => {
+      modalBackdrop.classList.add("show");
+      actualizarVisibilidadDireccion();
+    });
+
+    closeModalBtn.addEventListener("click", () => {
+      modalBackdrop.classList.remove("show");
+    });
+
+    modalBackdrop.addEventListener("click", (e) => {
+      if(e.target === modalBackdrop){
+        modalBackdrop.classList.remove("show");
+      }
+    });
+
+    tipoEntrega.addEventListener("change", actualizarVisibilidadDireccion);
+
+    sendBtn.addEventListener("click", () => {
+      const mensaje = construirMensaje();
+      if(!mensaje) return;
+      const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`;
+      window.location.href = url;
+    });
+
+    searchInput.addEventListener("input", renderMenu);
+
+    crearChips();
+    renderMenu();
+    actualizarResumen();
+    actualizarVisibilidadDireccion();
+  </script>
+
+</body>
+</html>
